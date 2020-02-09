@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--接口代理-->
+<mapper namespace="com.xr.dao.Rolemapper">
+    <!--删除角色-->
+    <delete id="deleteRole">
+        delete from t_role where rid=#{rid}
+    </delete>
+    <!--查询：根据rid查询角色对象-->
+    <select id="queryRoleById" resultType="com.xr.model.Role">
+        select * from t_role where rid=#{rid}
+    </select>
+
+    <!--模糊查询-->
+    <select id="queryRoleByTj" resultType="com.xr.model.Role">
+        select * from t_role where role_name like  CONCAT('%', #{rname},'%')
+    </select>
+
+    <!--查询所有角色-->
+    <select id="queryRole" resultType="com.xr.model.Role">
+        select  * from t_role
+    </select>
+
+    <!--根据角色ID查询角色信息及该角色所有的权限-->
+    <select id="queryRoleAndMenuById" parameterType="int" resultType="HashMap">
+        select r.rid,r.role_name,m.mid,m.menu_name,m.url,m.parent_id,m.code,m.iconCls from t_role r, t_role_menu rm, t_menu m
+        where r.rid=#{rid} and rm.rid = r.rid and m.mid=rm.mid
+    </select>
+
+    <!--添加角色-->
+    <insert id="addRole" parameterType="Role" useGeneratedKeys="true" keyProperty="rid">
+      insert into t_role(role_name)
+      values (#{roleName})
+    </insert>
+
+
+    <!--授权-->
+    <insert id="addRoleAndMenu" parameterType="Map">
+      insert into
+        t_role_menu(rid,mid)
+      values
+          <foreach collection="pres" item="mid" separator=",">
+            (#{rid}, #{mid})
+          </foreach>
+    </insert>
+
+    
+</mapper>

@@ -1,0 +1,27 @@
+[
+	{
+		"id":"4301",
+		"text": "用户管理",
+		"attribute":{
+			"url":"userManage.jsp"
+		}
+	},{
+		"id":"4302",
+		"text": "角色管理",
+		"attribute":{
+			"url":"bookList.jsp"
+		}
+	},{
+		"id":"4303",
+		"text": "权限管理",
+		"attribute":{
+			"url":"userManage.jsp"
+		}
+	},{
+		"id":"4304",
+		"text": "字典管理",
+		"attribute":{
+			"url":"userManage.jsp"
+		}
+	}
+]

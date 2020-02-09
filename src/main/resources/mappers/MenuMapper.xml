@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--接口代理-->
+<mapper namespace="com.xr.dao.Menumapper">
+
+    <select id="cha" resultType="int">
+        select  count(*) from t_role_menu where rid=#{rid}
+    </select>
+    <delete id="deleteMenu">
+        delete from t_role_menu where rid=#{rid}
+    </delete>
+
+    <!--Mid查询-->
+    <select id="queryMenuById" parameterType="int" resultType="Menu">
+      select * from t_menu where mid=#{mid}
+    </select>
+    <!--查询所有-->
+    <select id="queryMenu" resultType="com.xr.model.Menu">
+        select * from t_menu
+    </select>
+    <!--模糊查询-->
+    <select id="queryMenuByIdTj" resultType="com.xr.model.Menu">
+        select * from t_menu where menu_name like  CONCAT('%',#{mname},'%')
+    </select>
+    <select id="queryMenuZtree" resultType="com.xr.model.Menu">
+        select * from t_menu
+
+    </select>
+
+    <!--添加权限-->
+    <insert id="addMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="mid">
+        insert into t_menu(menu_name,url)
+        values(#{menuName}, #{url})
+    </insert>
+
+    <resultMap id="resultMenu" type="Menu">
+        <id property="mid" column="mid"></id>
+        <result property="menuName" column="menu_name"></result>
+        <result property="url" column="url"></result>
+        <result property="parentId" column="parent_id"></result>
+        <result property="code" column="code"></result>
+        <result property="iconCls" column="iconCls"></result>
+        <!--集合-->
+        <collection property="roles" ofType="com.xr.model.Role" >
+            <id property="rid" column="rid"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+    </resultMap>
+    <select id="selectTJSY" parameterType="menu" resultMap="resultMenu">
+        select *  from t_menu where code=0
+        /*choose是像 Java 中的 switch 语句*/
+        <choose>
+            <!--当对象id属性不为null-->
+            <when test="mid != null">
+                and mid=#{mid}
+            </when>
+            <!--当对象uname属性和upwd属性不为null-->
+            <when test=" menuName != null and url != null ">
+                and menu_name=#{menuName} or url=#{url}
+            </when>
+            <otherwise>
+                and parent_id = #{parentId}
+            </otherwise>
+        </choose>
+       <!--<if test="mid!=null">
+            where mid=#{mid}
+        </if>-->
+        /* gt相当于大于号，test中不能包含小于号 */
+      <!--  <if test="mid!=null and mid gt 3">
+            where mid=#{mid}
+        </if>-->
+       <!-- <if test="mid!=null">
+            or mid=#{mid}
+        </if>-->
+        /* 查询是否以'菜单'开头的字符串 */
+      <!--  <if test="menuName!=null and menuName.indexOf('菜单')==0">
+            where menu_name=#{menuName}
+        </if>-->
+        /* 查询是否以'设置'包含的字符串 */
+      <!--  <if test="menuName!=null and menuName.indexOf('设置')>=0">
+            where menu_name=#{menuName}
+        </if>-->
+        /* 查询是否以'置'结尾的字符串 */
+       <!--<if test="menuName!=null and menuName.lastIndexOf('置')>0">
+            where menu_name=#{menuName}
+        </if>-->
+        /*是否包含'用户'*/
+       <!--<if test="menuName!=null and '用户'.equals(menuName)">
+            where menu_name=#{menuName}
+        </if>-->
+        <!--当下面有一个if条件满足时，才会在上面的select语句后面拼“ where ”-->
+       <!-- <where>
+            <if test="mid != null">
+                mid = #{mid}
+            </if>
+            <if test="url != null">
+                and url= #{url}
+            </if>
+            <if test="menuName !=null and url != null">
+                or menu_name = #{menuName} or url = #{url}
+            </if>
+        </where>-->
+
+    </select>
+    <update id="updateMenu" parameterType="menu">
+        update
+        t_menu
+        <set>
+            <if test="url!=null">
+                url=#{url},
+            </if>
+            <if test="code!=null">
+                code=#{code},
+            </if>
+        </set>
+        <where>
+            <if test="mid!=null">
+                mid=#{mid}
+            </if>
+        </where>
+
+    </update>
+
+    <delete id="deleteMid" parameterType="List">
+        delete from t_menu where mid in
+        <foreach collection="list" item="item" open="(" separator= "," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

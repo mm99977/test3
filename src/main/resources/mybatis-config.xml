@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--引入db.properties文件-->
+    <properties resource="db.properties"></properties>
+
+    <!--配置log4j日志-->
+    <settings>
+        <!--解决驼峰命名与_命名：实体类与表-->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="logImpl" value="LOG4J2" />
+    </settings>
+
+    <!--设置类的别名-->
+    <typeAliases>
+        <!--将com.xr.mybatis.model.Book设置别名为book-->
+        <!--<typeAlias type="com.xr.mybatis.model.Book" alias="book"></typeAlias>-->
+
+        <!--将com.xr.mybatis.model包下所有的类设置别名。默认的别名就是类名，大小写都可以
+            比如：com.xr.mybatis.model.Book，它默认别名有两个: Book  和  book
+        -->
+        <package name="com.xr.model"></package>
+    </typeAliases>
+
+    <!--配置数据库环境-->
+    <environments default="development">
+
+        <!--配置开发环境（测试环境，生产环境）-->
+        <environment id="development">
+            <!--事务管理器-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--数据源：使用连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${db.driverClass}"></property>
+                <property name="url" value="${db.url}"></property>
+                <property name="username" value="${db.username}"></property>
+                <property name="password" value="${db.password}"></property>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--加载Mpper映射文件-->
+    <mappers>
+        <mapper resource="mappers/RoleMapper.xml"/>
+        <mapper resource="mappers/MenuMapper.xml"/>
+        <!--<package name="mappers"></package>-->
+    </mappers>
+
+
+</configuration>
